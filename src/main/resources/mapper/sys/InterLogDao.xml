@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.InterLogDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.InterLogEntity" id="interLogMap">
+        <result property="ilId" column="il_id"/>
+        <result property="requestArgu" column="request_argu"/>
+        <result property="requestDate" column="request_date"/>
+        <result property="responseArgu" column="response_argu"/>
+        <result property="useHours" column="use_hours"/>
+        <result property="createPerson" column="create_person"/>
+        <result property="laiyuan" column="laiyuan"/>
+        <result property="ilType" column="il_type"/>
+    </resultMap>
+
+
+</mapper>
