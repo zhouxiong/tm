@@ -4,19 +4,28 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Excel工具类
+ * @author 70634
+ *
+ */
 public class ExcelUtils {
+	private Logger Logger= LoggerFactory.getLogger(ExcelUtils.class);
     /**
      * 读取excel 第1张sheet （xls和xlsx）
      *
@@ -172,7 +181,7 @@ public class ExcelUtils {
                     // 获取第一个sheet
                     sheet = wb.getSheetAt(k);
                     String sheetName = sheet.getSheetName();
-                    System.out.println("sheetName==="+sheetName);
+                    Logger.debug("sheetName="+sheetName);
                     // 获取最大行数
                     int rownum = sheet.getPhysicalNumberOfRows();
                     // 获取第一行曲线ID
@@ -264,7 +273,7 @@ public class ExcelUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-         System.out.println(listValue);
+        Logger.info(listValue.toString());
         return listValue;
     }
 }
