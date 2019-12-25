@@ -1,8 +1,10 @@
 package io.renren.modules.cailiao.dao;
 
-import io.renren.modules.cailiao.entity.WisdplatCailiaoEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import io.renren.modules.cailiao.entity.WisdplatCailiaoEntity;
 
 /**
  * 材料信息表
