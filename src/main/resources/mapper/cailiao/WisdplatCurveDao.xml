@@ -18,7 +18,7 @@
     </resultMap>
 
     <select id="queryListParentId" resultType="io.renren.modules.cailiao.entity.WisdplatCurveEntity">
-		select * from wisdplat_curve where wc_cailiao_id = #{value}
+		select * from wisdplat_curve where wc_cailiao_id = #{wcCailiaoId}
 	</select>
 
     <!--对明细表插入单条记录 -->

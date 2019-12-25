@@ -45,7 +45,6 @@ public class WisdplatCurveServiceImpl extends ServiceImpl<WisdplatCurveDao, Wisd
     @Override
     public int insert(WisdplatCurveEntity wisdplatCurveEntity) {
 
-
         return baseMapper.insert(wisdplatCurveEntity);
     }
 
