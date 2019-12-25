@@ -1,21 +1,19 @@
-package io.renren.modules.generator.entity;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+package io.renren.modules.cailiao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 
 /**
  * 材料信息表
- *
+ * 
  * @author chenshun
  * @email sunlightcs@gmail.com
- * @date 2019-12-22 13:50:06
+ * @date 2019-12-25 13:51:16
  */
 @Data
 @TableName("wisdplat_cailiao")
@@ -103,9 +101,5 @@ public class WisdplatCailiaoEntity implements Serializable {
 	 * 修改时间
 	 */
 	private Date clUpdateDate;
-
-	//曲线ID数组
-	@TableField(exist=false)
-	private List<?> curveIdList;
 
 }

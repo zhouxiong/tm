@@ -1,22 +1,21 @@
-package io.renren.modules.generator.service.impl;
+package io.renren.modules.cailiao.service.impl;
 
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import org.apache.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import io.renren.common.utils.ExcelUtils;
-import io.renren.modules.generator.dao.WisdplatCurveDao;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
-
-import io.renren.modules.generator.dao.WisdplatCailiaoDao;
-import io.renren.modules.generator.entity.WisdplatCailiaoEntity;
-import io.renren.modules.generator.service.WisdplatCailiaoService;
+import io.renren.modules.cailiao.dao.WisdplatCailiaoDao;
+import io.renren.modules.cailiao.entity.WisdplatCailiaoEntity;
+import io.renren.modules.cailiao.service.WisdplatCailiaoService;
 
 
 @Service("wisdplatCailiaoService")
@@ -24,7 +23,11 @@ public class WisdplatCailiaoServiceImpl extends ServiceImpl<WisdplatCailiaoDao, 
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        System.out.println("params============"+params);
+//        IPage<WisdplatCailiaoEntity> page = this.page(
+//                new Query<WisdplatCailiaoEntity>().getPage(params),
+//                new QueryWrapper<WisdplatCailiaoEntity>()
+//        );
+//        
         Object objKey = params.get("key");
         JSONObject json = null;
         json = JSON.parseObject((String) objKey);
@@ -46,15 +49,9 @@ public class WisdplatCailiaoServiceImpl extends ServiceImpl<WisdplatCailiaoDao, 
                         .orderByDesc("cl_id")
         );
         return new PageUtils(page);
+
     }
 
-
-    @Override
-    public int insert(WisdplatCailiaoEntity entity) {
-        System.out.println("entity=========="+entity);
-//        ExcelUtils excelUtils = new ExcelUtils();
-//        excelUtils.readExcelColumn("E:\\材料应力应变曲线-模板.xlsx");
-        return baseMapper.insert(entity);
-    }
+	
 
 }
