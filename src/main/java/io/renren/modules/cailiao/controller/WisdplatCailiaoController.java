@@ -47,7 +47,7 @@ public class WisdplatCailiaoController {
      * 信息
      */
     @RequestMapping("/info/{clId}")
-    @RequiresPermissions("generator:wisdplatcailiao:info")
+    @RequiresPermissions("cailiao:wisdplatcailiao:info")
     public R info(@PathVariable("clId") Long clId){
 		WisdplatCailiaoEntity wisdplatCailiao = wisdplatCailiaoService.getById(clId);
 
