@@ -1,8 +1,11 @@
 package io.renren.modules.cailiao.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import io.renren.modules.cailiao.entity.WisdplatCurveEntity;
+import io.renren.modules.cailiao.service.WisdplatCurveService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +34,9 @@ public class WisdplatCailiaoController {
     @Autowired
     private WisdplatCailiaoService wisdplatCailiaoService;
 
+    @Autowired
+    private WisdplatCurveService wisdplatCurveService;
+
     /**
      * 列表
      */
@@ -47,9 +53,11 @@ public class WisdplatCailiaoController {
      * 信息
      */
     @RequestMapping("/info/{clId}")
-    @RequiresPermissions("generator:wisdplatcailiao:info")
+    @RequiresPermissions("cailiao:wisdplatcailiao:info")
     public R info(@PathVariable("clId") Long clId){
 		WisdplatCailiaoEntity wisdplatCailiao = wisdplatCailiaoService.getById(clId);
+        List<WisdplatCurveEntity> curveIdList = wisdplatCurveService.queryListParentId(clId);
+        wisdplatCailiao.setCurveIdList(curveIdList);
 
         return R.ok().put("wisdplatCailiao", wisdplatCailiao);
     }
