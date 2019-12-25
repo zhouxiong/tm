@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.generator.dao.WisdplatCailiaoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.generator.entity.WisdplatCailiaoEntity" id="wisdplatCailiaoMap">
+        <result property="clId" column="cl_id"/>
+        <result property="clNo" column="cl_no"/>
+        <result property="clName" column="cl_name"/>
+        <result property="clPaihao" column="cl_paihao"/>
+        <result property="clWendu" column="cl_wendu"/>
+        <result property="clChangjia" column="cl_changjia"/>
+        <result property="clMidu" column="cl_midu"/>
+        <result property="clBosongbi" column="cl_bosongbi"/>
+        <result property="clMoliang" column="cl_moliang"/>
+        <result property="clSigy" column="cl_sigy"/>
+        <result property="clEtan" column="cl_etan"/>
+        <result property="clFail" column="cl_fail"/>
+        <result property="clC" column="cl_c"/>
+        <result property="clP" column="cl_p"/>
+        <result property="clFenleiId" column="cl_fenlei_id"/>
+        <result property="clFileAddr" column="cl_file_addr"/>
+        <result property="clCreatePerson" column="cl_create_person"/>
+        <result property="clCreateDate" column="cl_create_date"/>
+        <result property="clUpdatePerson" column="cl_update_person"/>
+        <result property="clUpdateDate" column="cl_update_date"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="io.renren.modules.generator.entity.WisdplatCailiaoEntity" useGeneratedKeys="true" keyProperty="clId">
+         INSERT INTO wisdplat_cailiao
+            (cl_no,cl_name,cl_paihao,cl_wendu,cl_changjia,cl_midu,cl_bosongbi,cl_moliang,cl_sigy,cl_etan,cl_fail,cl_c,cl_p,cl_fenlei_id)
+            VALUES
+            (#{clNo},#{clName},#{clPaihao},#{clWendu},#{clChangjia},#{clMidu},#{clBosongbi},#{clMoliang},#{clSigy},#{clEtan},#{clFail},
+                #{clC},#{clP},#{clFenleiId})
+        <selectKey keyProperty="clId" resultType="Long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+</mapper>
