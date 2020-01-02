@@ -107,7 +107,18 @@ public class WisdplatCailiaoEntity implements Serializable {
 
 	//曲线ID数组
 	@TableField(exist=false)
-	private List<?> curveIdList;
-
+	private List<WisdplatCurveEntity> curveIdList;
+	//文件类型
+	@TableField(exist=false)
+	private String fileType;
+	//是否加密
+	@TableField(exist=false)
+	private String jiami;
+	//盘符
+	@TableField(exist=false)
+	private String panfu;
+	//文件名称
+	@TableField(exist=false)
+	private String fileurl;
 
 }

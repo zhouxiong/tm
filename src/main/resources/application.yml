@@ -4,7 +4,7 @@ server:
     uri-encoding: UTF-8
     max-threads: 1000
     min-spare-threads: 30
-  port: 8080
+  port: 8887
   connection-timeout: 5000ms
   servlet:
     context-path: /renren-fast
@@ -37,6 +37,8 @@ spring:
         min-idle: 5       # 连接池中的最小空闲连接
   mvc:
     throw-exception-if-no-handler-found: true
+  resources: 
+    static-locations: classpath:static/
 #  resources:
 #    add-mappings: false
 

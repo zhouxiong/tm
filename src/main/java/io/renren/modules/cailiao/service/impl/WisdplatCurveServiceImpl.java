@@ -1,19 +1,20 @@
 package io.renren.modules.cailiao.service.impl;
 
-import io.renren.modules.cailiao.dao.WisdplatCailiaoDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
-
 import io.renren.modules.cailiao.dao.WisdplatCurveDao;
+import io.renren.modules.cailiao.entity.WisdplatCailiaoEntity;
 import io.renren.modules.cailiao.entity.WisdplatCurveEntity;
 import io.renren.modules.cailiao.service.WisdplatCurveService;
 
@@ -36,16 +37,36 @@ public class WisdplatCurveServiceImpl extends ServiceImpl<WisdplatCurveDao, Wisd
 
     @Override
     public List<WisdplatCurveEntity> queryListParentId(Long wc_cailiao_id) {
-//        System.out.println("11111===="+baseMapper.queryListParentId(wc_cailiao_id));
         List<WisdplatCurveEntity> temp = new ArrayList();
         temp = baseMapper.queryListParentId(wc_cailiao_id);
+        if(null!=temp && temp.size()>0) {
+        	Iterator itelst=temp.iterator();
+        	while(itelst.hasNext()) {
+        		WisdplatCurveEntity crvEntity=(WisdplatCurveEntity)itelst.next();
+        		Long wcId=crvEntity.getWcId();
+        		baseMapper.deleteById(wcId);
+        	}
+        }
         return temp;
     }
 
-    @Override
     public int insert(WisdplatCurveEntity wisdplatCurveEntity) {
 
         return baseMapper.insert(wisdplatCurveEntity);
     }
+    
+    /**
+	 * 根据ID属性查询
+	 */
+	public List findCurveInfoById(Long wcid) {
+		List list=baseMapper.findCurveInfoById(wcid);
+		return list;
+	}
+	/**
+	 *   根据属性查询
+	 */
+	public List findProperty(Map<String, Object> map) {
+		return baseMapper.findProperty(map);
+	}
 
 }

@@ -1,12 +1,13 @@
 package io.renren.modules.cailiao.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.service.IService;
+
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.cailiao.entity.WisdplatCailiaoEntity;
 import io.renren.modules.cailiao.entity.WisdplatCurveEntity;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 曲线表
@@ -22,5 +23,18 @@ public interface WisdplatCurveService extends IService<WisdplatCurveEntity> {
 
 
     int insert(WisdplatCurveEntity wisdplatCurveEntity);
+    
+    /**
+     * 	根据Id属性查询
+     * @param map
+     * @return
+     */
+    public List<WisdplatCailiaoEntity> findCurveInfoById(Long wcid);
+    /**
+     * 	根据属性查询
+     * @param map
+     * @return
+     */
+    public List findProperty(Map<String,Object> map);
 }
 

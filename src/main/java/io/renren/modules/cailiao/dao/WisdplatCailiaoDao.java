@@ -18,4 +18,9 @@ public interface WisdplatCailiaoDao extends BaseMapper<WisdplatCailiaoEntity> {
 
     @Override
     int insert(WisdplatCailiaoEntity entity);
+    /**
+     * 	 获取当前最大ID
+     * @return
+     */
+    public Long maxId();
 }

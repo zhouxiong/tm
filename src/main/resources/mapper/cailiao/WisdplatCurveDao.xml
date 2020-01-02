@@ -16,7 +16,10 @@
         <result property="updatePerson" column="update_person"/>
         <result property="updateDate" column="update_date"/>
     </resultMap>
-
+	<sql id="Base_column_list">
+		wc_id,wc_no,wc_x,wc_y,wc_xishu,wc_cailiao_id,create_person,create_date,
+		update_person,update_date
+	</sql>
     <select id="queryListParentId" resultType="io.renren.modules.cailiao.entity.WisdplatCurveEntity">
 		select * from wisdplat_curve where wc_cailiao_id = #{wcCailiaoId}
 	</select>
@@ -24,10 +27,20 @@
     <!--对明细表插入单条记录 -->
     <insert id="insert" parameterType="io.renren.modules.cailiao.entity.WisdplatCurveEntity" >
     INSERT INTO wisdplat_curve
-        (wc_no,wc_x,wc_y,wc_cailiao_id)
+        (wc_no,wc_x,wc_y,wc_cailiao_id,wc_xishu)
     VALUES
-     ("10006","12","15",#{wcCailiaoId})
+     (#{wcNo},#{wcX},#{wcY},#{wcCailiaoId},#{wcXishu})
     </insert>
-
+	<select id="findCurveInfoById" resultMap="wisdplatCurveMap" parameterType="java.lang.Long"> 
+		select <include refid="Base_column_list"/> from wisdplat_curve where
+		wc_cailiao_id=#{wcCailiaoId,jdbcType=BIGINT}
+	</select>
+	<select id="findProperty" resultMap="wisdplatCurveMap" parameterType="java.util.Map">
+		select <include refid="Base_column_list"/> from wisdplat_curve where 1=1
+		<if test="wcCailiaoId!=null">
+			and wc_cailiao_id=#{wcCailiaoId,jdbcType=BIGINT}
+		</if>
+	</select>
+	
 
 </mapper>

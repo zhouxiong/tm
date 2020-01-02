@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 2017年9月8日
  */
 public class UploadFileUtils {
+	
 	/**
 	 *
 	 * <B>方法名称：</B>文件上传<BR>
@@ -103,7 +104,8 @@ public class UploadFileUtils {
         String returnMsg="";
         if(null!=tmpFile){
             //获取物理路径
-            String targetDirectory=request.getSession().getServletContext().getRealPath("/"+dirStr);
+            //String targetDirectory=request.getSession().getServletContext().getRealPath("/"+dirStr);
+        	String targetDirectory=dirStr;
             File fileDir=new File(targetDirectory);
             if(fileDir.exists()==false){
                 fileDir.mkdir();

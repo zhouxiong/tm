@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cailiao.dao.WisdplatLCSRDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cailiao.entity.WisdplatLCSREntity" id="wisdplatLCSRMap">
+        <result property="lcsrId" column="lcsr_id"/>
+        <result column="lcsr_no" property="lcsrNo"/>
+        <result column="lcsr_rate" property="lcsrRate"/>
+        <result column="lcsr_xishu" property="lcsrXishu"/>
+        <result column="cailiao_id" property="wcCailiaoId"/>
+        <result column="create_person" property="createPerson"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_person" property="updatePerson"/>
+        <result column="update_date" property="updateDate"/>
+    </resultMap>
+    <sql id="Base_column_list">
+    	lcsr_id,lcsr_no,lcsr_rate,lcsr_xishu,cailiao_id,create_person,create_date,
+    	update_person,update_date
+    </sql>
+	<select id="findProperty" resultMap="wisdplatLCSRMap" parameterType="java.util.Map">
+		select <include refid="Base_column_list"/> from wisdplat_lcsr 
+		where 1=1
+		<if test="lcsrId!=null">
+			and lcsr_id=#{lcsrId,jdbcType=BIGINT}
+		</if>
+		<if test="wcCailiaoId!=null">
+			and  cailiao_id=#{wcCailiaoId,jdbcType=BIGINT}
+		</if>
+	</select>
+	<insert id="insert" parameterType="io.renren.modules.cailiao.entity.WisdplatLCSREntity" >
+    INSERT INTO wisdplat_lcsr
+        (lcsr_no,lcsr_rate,lcsr_xishu,cailiao_id)
+    VALUES
+     (#{lcsrNo},#{lcsrRate},#{lcsrXishu},#{wcCailiaoId})
+    </insert>
+    <delete id="deleteInfo" parameterType="io.renren.modules.cailiao.entity.WisdplatLCSREntity">
+    	delete from wisdplat_lcsr where 1=1
+    	<if test="lcsrId!=null">
+    		and lcsr_id=#{lcsrId,jdbcType=BIGINT}
+    	</if>
+    	<if test="wcCailiaoId!=null">
+    		and cailiao_id=#{wcCailiaoId,jdbcType=BIGINT}
+    	</if>
+    </delete>
+
+</mapper>

@@ -1,10 +1,13 @@
 package io.renren.modules.cailiao.dao;
 
-import io.renren.modules.cailiao.entity.WisdplatCurveEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import io.renren.modules.cailiao.entity.WisdplatCurveEntity;
 
 /**
  * 曲线表
@@ -19,4 +22,13 @@ public interface WisdplatCurveDao extends BaseMapper<WisdplatCurveEntity> {
 
     @Override
     int insert(WisdplatCurveEntity entity);
+    
+    public List<WisdplatCurveEntity> findCurveInfoById(Long wcid);
+    /**
+     * 	 根据属性查询
+     * @param map
+     * @return
+     */
+    public List findProperty(Map<String,Object> map);
+    
 }

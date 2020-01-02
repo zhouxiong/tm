@@ -15,6 +15,23 @@
         <result property="updatePerson" column="update_person"/>
         <result property="updateDate" column="update_date"/>
     </resultMap>
-
-
+    <sql id="Base_column_sql">
+    	ct_id,ct_table_no,ct_yingbian_rate,ct_curve_id,ct_cl_id,create_person,create_date,update_person,
+    	update_date
+    </sql>
+	<select id="findProperty" resultMap="wisdplatCailiaoTableMap" parameterType="java.util.Map">
+		select <include refid="Base_column_sql"/> from wisdplat_cailiao_table where 1=1
+		<if test="ctClId!=null">
+			and ct_cl_id=#{ctClId,jdbcType=BIGINT}
+		</if>
+	</select>
+	<delete id="deleteInfo" parameterType="io.renren.modules.cailiao.entity.WisdplatCailiaoTableEntity">
+		delete from wisdplat_cailiao_table where 1=1
+		<if test="ctId!=null">
+			and ct_id=#{ctId,jdbcType=BIGINT}
+		</if>
+		<if test="ctClId!=null">
+			and ct_cl_id=#{ctClId,jdbcType=BIGINT}
+		</if>
+	</delete>
 </mapper>

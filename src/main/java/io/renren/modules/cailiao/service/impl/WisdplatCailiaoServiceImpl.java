@@ -1,10 +1,13 @@
 package io.renren.modules.cailiao.service.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
-import org.apache.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -51,7 +54,20 @@ public class WisdplatCailiaoServiceImpl extends ServiceImpl<WisdplatCailiaoDao, 
         return new PageUtils(page);
 
     }
-
+    /**
+     * 根据ID查询返回List
+     */
+	public List<WisdplatCailiaoEntity> queryListParentId(Long clId) {
+		List list=new ArrayList();
+		list=(List) baseMapper.selectById(clId);
+		return list;
+	}
+	/**
+	 *  获取当前插入ID
+	 */
+	public Long maxId() {
+		return baseMapper.maxId();
+	}
 	
 
 }

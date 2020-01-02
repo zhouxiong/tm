@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ import io.renren.common.utils.R;
 @RestController
 @RequestMapping("generator/wisdplatcailiaotable")
 public class WisdplatCailiaoTableController {
+	private Logger logger= LoggerFactory.getLogger(WisdplatCailiaoTableController.class);
     @Autowired
     private WisdplatCailiaoTableService wisdplatCailiaoTableService;
 

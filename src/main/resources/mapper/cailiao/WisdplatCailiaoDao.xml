@@ -26,6 +26,8 @@
         <result property="clUpdatePerson" column="cl_update_person"/>
         <result property="clUpdateDate" column="cl_update_date"/>
     </resultMap>
-
+	<select id="maxId" resultType="java.lang.Long">
+		select max(cl_id) from wisdplat_cailiao order by cl_id desc
+	</select>
 
 </mapper>
