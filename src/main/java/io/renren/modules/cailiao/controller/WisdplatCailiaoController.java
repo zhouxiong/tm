@@ -80,7 +80,6 @@ public class WisdplatCailiaoController {
     @RequiresPermissions("cailiao:wisdplatcailiao:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = wisdplatCailiaoService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 
