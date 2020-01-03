@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -30,7 +31,7 @@ public class WisdplatCailiaoServiceImpl extends ServiceImpl<WisdplatCailiaoDao, 
 //                new Query<WisdplatCailiaoEntity>().getPage(params),
 //                new QueryWrapper<WisdplatCailiaoEntity>()
 //        );
-//        
+//
         Object objKey = params.get("key");
         JSONObject json = null;
         json = JSON.parseObject((String) objKey);
@@ -60,6 +61,7 @@ public class WisdplatCailiaoServiceImpl extends ServiceImpl<WisdplatCailiaoDao, 
 	public List<WisdplatCailiaoEntity> queryListParentId(Long clId) {
 		List list=new ArrayList();
 		list=(List) baseMapper.selectById(clId);
+
 		return list;
 	}
 	/**
@@ -68,6 +70,6 @@ public class WisdplatCailiaoServiceImpl extends ServiceImpl<WisdplatCailiaoDao, 
 	public Long maxId() {
 		return baseMapper.maxId();
 	}
-	
+
 
 }
