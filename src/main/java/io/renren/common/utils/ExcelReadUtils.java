@@ -148,6 +148,6 @@ public class ExcelReadUtils {
 		return val;
 	}
 //	public static void main(String[] args) {
-//		HashSet<String> excelParamsSet = ExcelReadUtils.getColumnSet("G:\\renren-fast\\材料应力应变曲线-模板_wu_20191219-20191230112039.xlsx", 2, 4,20,0);//读取指定列的指定行数数据
+//		HashSet<String> excelParamsSet = ExcelReadUtils.getColumnSet("G:\\renren-fast\\材料应力应变曲线-模板_wu_20191219-20191230112039.xlsx", 2, 1,20,0);//读取指定列的指定行数数据
 //	}
 }

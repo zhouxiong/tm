@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,9 +19,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.renren.common.exception.RRException;
 import org.apache.http.HttpStatus;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -34,6 +34,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
+import io.renren.common.exception.RRException;
 import io.renren.common.utils.ExcelReadUtils;
 import io.renren.common.utils.FileUtils;
 import io.renren.common.utils.PageUtils;
@@ -132,232 +135,331 @@ public class WisdplatCailiaoController {
 			throw new RRException("材料编号重复!", HttpStatus.SC_BAD_REQUEST);
 		}else {
 			//获取文件名
-			String fileName = "";
-			if (null != files && !"".equals(files)) {
-				fileName = files.getOriginalFilename();
-			}
-			WisdplatCailiaoEntity wcl = new WisdplatCailiaoEntity();
-			wcl.setClBosongbi(clBosongbi);
-			wcl.setClChangjia(clChangjia);
-			wcl.setClEtan(clEtan);
-			wcl.setClFail(clFail);
-			wcl.setClFenleiId(clFenleiId);
-			wcl.setClFileAddr(clFileAddr);
-			wcl.setClMidu(clMidu);
-			wcl.setClC(clC);
-			wcl.setClMoliang(clMoliang);
-			wcl.setClName(clName);
-			wcl.setClNo(clNo);
-			wcl.setClP(clP);
-			wcl.setClPaihao(clPaihao);
-			wcl.setClSigy(clSigy);
-			wcl.setClWendu(clWendu);
+	    	String fileName="";
+	    	if(null!=files && !"".equals(files)) {
+	    		fileName=files.getOriginalFilename();
+	    	}
+	    	WisdplatCailiaoEntity wcl=new WisdplatCailiaoEntity();
+	    	wcl.setClBosongbi(clBosongbi);
+	    	wcl.setClChangjia(clChangjia);
+	    	wcl.setClEtan(clEtan);
+	    	wcl.setClFail(clFail);
+	    	wcl.setClFenleiId(clFenleiId);
+	    	wcl.setClFileAddr(clFileAddr);
+	    	wcl.setClMidu(clMidu);
+	    	wcl.setClC(clC);
+	    	wcl.setClMoliang(clMoliang);
+	    	wcl.setClName(clName);
+	    	wcl.setClNo(clNo);
+	    	wcl.setClP(clP);
+	    	wcl.setClPaihao(clPaihao);
+	    	wcl.setClSigy(clSigy);
+	    	wcl.setClWendu(clWendu);
 			wisdplatCailiaoService.save(wcl);
+			
 			//获取当前操作的材料ID，上传Excel然后读取Excel数据进行插入操作
-			Long dbclId = wisdplatCailiaoService.maxId();
-			if (!"".equals(fileName) && null != fileName) {
-				String filePath = System.getProperty("user.dir") + "\\uploads\\";
+			Long dbclId=wisdplatCailiaoService.maxId();
+			if(null!=files && !"".equals(fileName) && null!=fileName) {
+				String filePath=System.getProperty("user.dir")+"\\uploads\\";
 				UploadFileUtils.uploadFile(filePath, files, request);
 				//读取Excel文件，读取第一个sheet，第二个sheet,第三个sheet
 				//读取LCSS表
 				//读取第一组曲线-应变值
 				//获取所有列然后循环取数据
 				Workbook wb = ExcelReadUtils.readExcel(files); // 文件
-				int sheetAt = 0;
+				int sheetAt=0;
 				Sheet sheet = wb.getSheetAt(sheetAt); // sheet
-				int totalColumns = sheet.getRow(0).getPhysicalNumberOfCells();
-				//for(int i=1;i<totalColumns;i++) {
-				HashSet<String> StrOneLcss = ExcelReadUtils.getColumnSet(files, 1, 3, 0, 0);//X
-				HashSet<String> StrOneLcssY = ExcelReadUtils.getColumnSet(files, 2, 3, 0, 0);//Y
-				HashSet<String> StrTwoLcss = ExcelReadUtils.getColumnSet(files, 2, 1, 0, 0);//读取指定列的指定行数数据
-				String curveIdLcssOne = StrTwoLcss.iterator().next();
-
-				String newsOneX = "";
-				String newsOneY = "";
-				if (!"".equals(StrOneLcss) && null != StrOneLcss) {
-					for (String sOneX : StrOneLcss) {
-						newsOneX += sOneX + ",";
+				int totalColumns=sheet.getRow(0).getPhysicalNumberOfCells();
+				int totalRows=sheet.getPhysicalNumberOfRows();
+				List<HashMap<String,String>> array=new ArrayList<HashMap<String, String>>();
+				String dbcurveIdInfoOne="";
+				List listOneX=new ArrayList();
+				List listOneY=new ArrayList();
+				List listTwoX=new ArrayList();
+				List listTwoY=new ArrayList();
+				List listThreeX=new ArrayList();
+				List listThreeY=new ArrayList();
+				List listFourX=new ArrayList();
+				List listFourY=new ArrayList();
+				List listFiveX=new ArrayList();
+				List listFiveY=new ArrayList();
+				HashSet<String> curveLcssOne=ExcelReadUtils.getColumnSet(files, 2, 1,0,0);
+				if(null!=curveLcssOne && !"".equals(curveLcssOne)) {
+					dbcurveIdInfoOne=curveLcssOne.iterator().next();
+					logger.info("曲线ID-1:"+dbcurveIdInfoOne);
+					//遍历应力和应变
+					HashSet<String> StrLcssOneX= ExcelReadUtils.getColumnSet(files, 1, 3,0,0);//应变
+					for(String objstrOneX:StrLcssOneX) {
+						listOneX.add(Double.parseDouble(objstrOneX));
+					}
+					HashSet<String> StrLcssOneY= ExcelReadUtils.getColumnSet(files, 2, 3,0,0);//应力
+					for(String objstrOneY:StrLcssOneY) {
+						listOneY.add(objstrOneY);
 					}
 				}
-				if (!"".equals(StrOneLcssY) && null != StrOneLcssY) {
-					for (String sOne : StrOneLcssY) {
-						newsOneY += sOne + ",";
-					}
-				}
-
-				HashSet<String> StrThreeLcss = ExcelReadUtils.getColumnSet(files, 3, 3, 0, 0);
-				String curveIdLcssTwo = StrThreeLcss.iterator().next();
-
-				HashSet<String> StrFourLcss = ExcelReadUtils.getColumnSet(files, 4, 1, 0, 0);//读取指定列的指定行数数据
-				String newsTwo = "";
-				String newsTwoX = "";
-				if (!"".equals(StrThreeLcss) && null != StrThreeLcss) {
-					for (String sTwoX : StrThreeLcss) {
-						newsTwoX += sTwoX + ",";
-					}
-				}
-
-				if (!"".equals(StrFourLcss) && null != StrFourLcss) {
-					for (String sTwo : StrFourLcss) {
-						newsTwo += sTwo + ",";
-					}
-				}
-
-
-				HashSet<String> StrFiveLcss = ExcelReadUtils.getColumnSet(files, 5, 3, 0, 0);
-				String curveIdLcssThree = StrFiveLcss.iterator().next();
-
-				HashSet<String> StrSixLcss = ExcelReadUtils.getColumnSet(files, 6, 1, 0, 0);//读取指定列的指定行数数据
-				String newsThree = "";
-				if (!"".equals(StrSixLcss) && null != StrSixLcss) {
-					for (String sThree : StrSixLcss) {
-						newsThree += sThree + ",";
-					}
-				}
-
-
-				HashSet<String> StrSevenLcss = ExcelReadUtils.getColumnSet(files, 7, 3, 0, 0);
-				String curveIdLcssFour = StrSevenLcss.iterator().next();
-
-				HashSet<String> StrEightLcss = ExcelReadUtils.getColumnSet(files, 8, 1, 0, 0);//读取指定列的指定行数数据
-
-				String newsFour = "";
-				if (!"".equals(StrEightLcss) && null != StrEightLcss) {
-					for (String sFour : StrEightLcss) {
-						newsFour += sFour + ",";
-					}
-				}
-
-				HashSet<String> StrNineLcss = ExcelReadUtils.getColumnSet(files, 9, 3, 0, 0);
-				String curveIdLcssFive = StrNineLcss.iterator().next();
-
-				HashSet<String> StTenLcss = ExcelReadUtils.getColumnSet(files, 10, 1, 0, 0);//读取指定列的指定行数数据
-				String newsFive = "";
-				if (!"".equals(StTenLcss) && null != StTenLcss) {
-					for (String sFive : StTenLcss) {
-						newsFive += sFive + ",";
-					}
-				}
-				WisdplatCurveEntity wce = new WisdplatCurveEntity();
-				if (!"".equals(newsOneX) && null != newsOneX) {
-					String[] nOneX = newsOneX.split(",");
-					String[] nOneY = newsOneY.split(",");
-					if (!"".equals(nOneX) && null != nOneX) {
-						for (int p = 0; p < nOneX.length; p++) {
-							//获取第一组
-							wce.setWcNo(curveIdLcssOne);
-							wce.setWcX(nOneX[p]);
-							wce.setWcY(nOneY[p]);
-							wce.setWcCailiaoId(dbclId);
-							wce.setWcXishu(String.valueOf(p++));
-							wisdplatCurveService.insert(wce);
+				Collections.sort(listOneX);
+				logger.info("X-1:"+listOneX);
+				Collections.sort(listOneY);
+				logger.info("y-1:"+listOneY);
+				if(null!=listOneX && listOneX.size()>0) {
+					WisdplatCurveEntity wcuEntityOne=new WisdplatCurveEntity();
+					for(int mm=0;mm<listOneX.size();mm++) {
+						String oneX=String.valueOf(listOneX.get(mm));
+						wcuEntityOne.setWcX(oneX);
+						for(int mn=0;mn<=mm;mn++) {
+							String oneY=String.valueOf(listOneY.get(mn));
+							wcuEntityOne.setWcY(oneY);
 						}
+						wcuEntityOne.setWcXishu(String.valueOf(mm));
+						wcuEntityOne.setWcNo(dbcurveIdInfoOne);
+						wcuEntityOne.setWcCailiaoId(dbclId);
+						wisdplatCurveService.insert(wcuEntityOne);
+					}
+				}
+				String dbcurveIdInfoTwo="";
+				HashSet<String> curveLcssTwo=ExcelReadUtils.getColumnSet(files, 4, 1,0,0);
+				if(null!=curveLcssTwo && !"".equals(curveLcssTwo)) {
+					dbcurveIdInfoTwo=curveLcssTwo.iterator().next();
+					HashSet<String> StrLcssTwoX= ExcelReadUtils.getColumnSet(files, 3, 3,0,0);//应变
+					for(String objstrTwoX:StrLcssTwoX) {
+						listTwoX.add(Double.parseDouble(objstrTwoX));
+					}
+					HashSet<String> StrLcssTwoY= ExcelReadUtils.getColumnSet(files, 4, 3,0,0);//应力
+					for(String objstrTwoY:StrLcssTwoY) {
+						listTwoY.add(objstrTwoY);
+					}
+				}
+				Collections.sort(listTwoX);
+				Collections.sort(listTwoY);
+				
+				if(null!=listTwoX && listTwoX.size()>0) {
+					WisdplatCurveEntity wcuEntitytwo=new WisdplatCurveEntity();
+					for(int pp=0;pp<listTwoX.size();pp++) {
+						String twoX=String.valueOf(listTwoX.get(pp));
+						wcuEntitytwo.setWcX(twoX);
+						for(int pn=0;pn<=pp;pn++) {
+							String twoY=String.valueOf(listTwoY.get(pn));
+							wcuEntitytwo.setWcY(twoY);
+						}
+						wcuEntitytwo.setWcXishu(String.valueOf(pp));
+						wcuEntitytwo.setWcNo(dbcurveIdInfoTwo);
+						wcuEntitytwo.setWcCailiaoId(dbclId);
+						wisdplatCurveService.insert(wcuEntitytwo);
+					}
+				}
+				
+				String dbcurveIdInfoThree="";
+				HashSet<String> curveLcssThree=ExcelReadUtils.getColumnSet(files, 6, 1,0,0);
+				if(null!=curveLcssThree && !"".equals(curveLcssThree)) {
+					dbcurveIdInfoThree=curveLcssThree.iterator().next();
+					HashSet<String> StrLcssThreeX= ExcelReadUtils.getColumnSet(files, 5, 3,0,0);//应变
+					for(String objstrThreeX:StrLcssThreeX) {
+						listThreeX.add(Double.parseDouble(objstrThreeX));
+					}
+					HashSet<String> StrLcssThreeY= ExcelReadUtils.getColumnSet(files, 6,3,0,0);//应力
+					for(String objstrThreeY:StrLcssThreeY) {
+						listThreeY.add(objstrThreeY);
+					}
+				}
+				Collections.sort(listThreeX);
+				Collections.sort(listThreeY);
+				
+				if(null!=listThreeX && listThreeX.size()>0) {
+					WisdplatCurveEntity wcuEntitythree=new WisdplatCurveEntity();
+					for(int pi=0;pi<listThreeX.size();pi++) {
+						String threeX=String.valueOf(listThreeX.get(pi));
+						wcuEntitythree.setWcX(threeX);
+						for(int pj=0;pj<=pi;pj++) {
+							String threeY=String.valueOf(listThreeY.get(pj));
+							wcuEntitythree.setWcY(threeY);
+						}
+						wcuEntitythree.setWcXishu(String.valueOf(pi));
+						wcuEntitythree.setWcNo(dbcurveIdInfoThree);
+						wcuEntitythree.setWcCailiaoId(dbclId);
+						wisdplatCurveService.insert(wcuEntitythree);
+					}
+				}
+				
+				
+				
+				String dbcurveIdInfoFour="";
+				HashSet<String> curveLcssFour=ExcelReadUtils.getColumnSet(files, 8, 1,0,0);
+				if(null!=curveLcssFour && !"".equals(curveLcssFour)) {
+					dbcurveIdInfoFour=curveLcssFour.iterator().next();
+					HashSet<String> StrLcssFourX= ExcelReadUtils.getColumnSet(files, 7, 3,0,0);//应变
+					for(String objstrFourX:StrLcssFourX) {
+						listFourX.add(Double.parseDouble(objstrFourX));
+					}
+					HashSet<String> StrLcssFourY= ExcelReadUtils.getColumnSet(files, 8,3,0,0);//应力
+					for(String objstrFourY:StrLcssFourY) {
+						listFourY.add(objstrFourY);
+					}
+				}
+				Collections.sort(listFourX);
+				Collections.sort(listFourY);
+				if(null!=listFourX && listFourX.size()>0) {
+					WisdplatCurveEntity wcuEntityfour=new WisdplatCurveEntity();
+					for(int oi=0;oi<listFourX.size();oi++) {
+						String fourX=String.valueOf(listFourX.get(oi));
+						wcuEntityfour.setWcX(fourX);
+						for(int oj=0;oj<=oi;oj++) {
+							String fourY=String.valueOf(listFourY.get(oj));
+							wcuEntityfour.setWcY(fourY);
+						}
+						wcuEntityfour.setWcXishu(String.valueOf(oi));
+						wcuEntityfour.setWcNo(dbcurveIdInfoFour);
+						wcuEntityfour.setWcCailiaoId(dbclId);
+						wisdplatCurveService.insert(wcuEntityfour);
+					}
+				}
+				
+				String dbcurveIdInfoFive="";
+				HashSet<String> curveLcssFive=ExcelReadUtils.getColumnSet(files, 10, 1,0,0);
+				if(!"".equals(curveLcssFive) && null!=curveLcssFive) {
+					dbcurveIdInfoFive=curveLcssFive.iterator().next();
+					HashSet<String> StrLcssFiveX= ExcelReadUtils.getColumnSet(files, 9, 3,0,0);//应变
+					for(String objstrFiveX:StrLcssFiveX) {
+						listFiveX.add(Double.parseDouble(objstrFiveX));
+					}
+					HashSet<String> StrLcssFiveY= ExcelReadUtils.getColumnSet(files, 10,3,0,0);//应力
+					for(String objstrFiveY:StrLcssFiveY) {
+						listFiveY.add(objstrFiveY);
+					}
+				}
+				Collections.sort(listFiveX);
+				Collections.sort(listFiveY);
+				if(null!=listFiveX && listFiveX.size()>0) {
+					WisdplatCurveEntity wcuEntityfive=new WisdplatCurveEntity();
+					for(int ti=0;ti<listFiveX.size();ti++) {
+						String fiveX=String.valueOf(listFiveX.get(ti));
+						wcuEntityfive.setWcX(fiveX);
+						for(int tj=0;tj<=ti;tj++) {
+							String fiveY=String.valueOf(listFiveY.get(tj));
+							wcuEntityfive.setWcY(fiveY);
+						}
+						wcuEntityfive.setWcXishu(String.valueOf(ti));
+						wcuEntityfive.setWcNo(dbcurveIdInfoFive);
+						wcuEntityfive.setWcCailiaoId(dbclId);
+						wisdplatCurveService.insert(wcuEntityfive);
 					}
 				}
 				/*
-				if(!"".equals(newsTwo) && null!=newsTwo) {
-					String[] nTwo=newsTwo.split(",");
-					String[] nTwoX=newsTwoX.split(",");
-					if(!"".equals(nTwo) && null!=nTwo) {
-						for(int pj=0;pj<nTwo.length;pj++) {
-							wce.setWcNo(curveIdLcssTwo);
-							wce.setWcY(nTwo[pj]);
-							wce.setWcX(nTwoX[pj]);
+				int newsRows=totalRows-2;
+				for(int i=1;i<totalColumns;i++) {
+					if(i%2==0) {
+						//循环获取曲线ID
+						HashSet<String> curveLcss=ExcelReadUtils.getColumnSet(files, i, 1,0,0);
+						String dbcurveIdInfo=curveLcss.iterator().next();
+						HashMap<String,String> hmp=new HashMap<String,String>();
+//						logger.info("循环获取曲线ID:"+dbcurveIdInfo);
+//						listHeader.add(dbcurveIdInfo);
+						HashSet<String> StrLcss = ExcelReadUtils.getColumnSet(files, i, 3,0,0);//Y
+						for(String objstr:StrLcss) {
+							hmp.put(dbcurveIdInfo, objstr);
 						}
+						array.add(hmp);
+					}else {
+						HashSet<String> StrLcss = ExcelReadUtils.getColumnSet(files, i, 3,0,0);//X
+//						for(String objstr:StrLcss) {
+//							xInfo+=objstr+",";
+//						}
+						
 					}
+				}
+				//遍历获取Y的值
+				for (HashMap<String, String> hm : array) {
+		            Set<String> set = hm.keySet();
+		            for (String key : set) {
+		                String value = hm.get(key);
+		                logger.info("获取:"+key + "---" + value);
+		            }
 				}
 				*/
-				String[] nThree = newsThree.split(",");
-				String[] nFour = newsFour.split(",");
-				String[] nFive = newsFive.split(",");
-
-				//}
 				//读取LCSR表
 				//获取曲线ID
-				HashSet<String> Strthree = ExcelReadUtils.getColumnSet(files, 2, 1, 0, 1);
-				String quxianId = Strthree.iterator().next();
-				logger.info("曲线ID:" + quxianId);
-				HashSet<String> Strfour = ExcelReadUtils.getColumnSet(files, 1, 3, 0, 1);
-				logger.info("应变率" + Strfour.toString());
-				String newsRate = "";
-				if (!"".equals(Strfour) && null != Strfour) {
-					for (String strOne : Strfour) {
-						newsRate += strOne + ",";
+				HashSet<String> Strthree = ExcelReadUtils.getColumnSet(files, 2, 1,0,1);
+				String quxianId=Strthree.iterator().next();
+				HashSet<String> Strfour=ExcelReadUtils.getColumnSet(files, 1, 3,0,1);
+				List list=new ArrayList();
+				String newsRate="";
+				if(!"".equals(Strfour) && null!=Strfour) {
+					for(String strOne:Strfour) {
+						list.add(strOne);
 					}
 				}
-				HashSet<String> Strfive = ExcelReadUtils.getColumnSet(files, 2, 3, 0, 1);
-				logger.info("屈服强度缩放系数" + Strfive.toString());
-				String newsXishu = "";
-				if (!"".equals(Strfive) && null != Strfive) {
-					for (String strTwo : Strfive) {
-						newsXishu += strTwo + ",";
+				Collections.sort(list);
+				List listxs=new ArrayList();
+				HashSet<String> Strfive=ExcelReadUtils.getColumnSet(files, 2, 3,0,1);
+				if(!"".equals(Strfive) && null!=Strfive) {
+					for(String strTwo:Strfive) {
+						listxs.add(strTwo);
 					}
 				}
-				String[] xishuStr = null;
-				if (!"".equals(newsXishu) && null != newsXishu) {
-					xishuStr = newsXishu.split(",");
-				}
-				if (!"".equals(quxianId) && null != quxianId) {
-					WisdplatLCSREntity lcsrEntity = new WisdplatLCSREntity();
+				Collections.sort(listxs);
+				if(!"".equals(quxianId) && null!=quxianId) {
+					WisdplatLCSREntity lcsrEntity=new WisdplatLCSREntity();
 					lcsrEntity.setWcCailiaoId(dbclId);
 					lcsrEntity.setLcsrNo(quxianId);
-					if (!"".equals(newsRate) && null != newsRate) {
-						String[] nrStr = newsRate.split(",");
-						if (null != nrStr && !"".equals(nrStr)) {
-							for (int q = 0; q < nrStr.length; q++) {
-								String yingbianRate = nrStr[q];
-								String ydxishu = xishuStr[q];
-								lcsrEntity.setLcsrRate(yingbianRate);
-								lcsrEntity.setLcsrXishu(ydxishu);
-								wisdplatLcsrService.insert(lcsrEntity);
+					if(!"".equals(list) && null!=list) {
+						for(int k=0;k<list.size();k++) {
+							String yingbianRate=String.valueOf(list.get(k));
+							lcsrEntity.setLcsrRate(yingbianRate);
+							if(null!=listxs && listxs.size()>0) {
+								for(int l=0;l<=k;l++) {
+									String ydxishu=String.valueOf(listxs.get(l));
+									lcsrEntity.setLcsrXishu(ydxishu);
+								}
 							}
+							wisdplatLcsrService.insert(lcsrEntity);
 						}
 					}
 				}
 				//读取TABLE表
-
-				HashSet<String> StrTableOne = ExcelReadUtils.getColumnSet(files, 2, 1, 0, 2);
-				String tableId = StrTableOne.iterator().next();
-				logger.info("TableID:" + tableId);
-				HashSet<String> StrTableTwo = ExcelReadUtils.getColumnSet(files, 1, 3, 0, 2);
-				logger.info("Table表中应变率" + StrTableTwo.toString());
-				String newsTableRate = "";
-				if (!"".equals(StrTableTwo) && null != StrTableTwo) {
-					for (String strTableRate : StrTableTwo) {
-						newsTableRate += strTableRate + ",";
-					}
-				}
-
-				HashSet<String> StrTableThree = ExcelReadUtils.getColumnSet(files, 2, 3, 0, 2);
-				logger.info("Table表中曲线ID" + StrTableThree.toString());
-				String newsTableCurve = "";
-				if (!"".equals(StrTableThree) && null != StrTableThree) {
-					for (String strTableCurve : StrTableThree) {
-						newsTableCurve += strTableCurve + ",";
-					}
-				}
-
-				if (!"".equals(tableId) && null != tableId) {
-					WisdplatCailiaoTableEntity tableEntity = new WisdplatCailiaoTableEntity();
-					if (!"".equals(newsTableRate) && null != newsTableRate) {
-						String[] ntr = newsTableRate.split(",");
-						String[] ntrY = newsTableCurve.split(",");
-						if (!"".equals(ntr) && null != ntr) {
-							for (int m = 0; m < ntr.length; m++) {
-								tableEntity.setCtTableNo(tableId);
-								tableEntity.setCtClId(dbclId);
-								tableEntity.setCtYingbianRate(ntr[m]);
-								tableEntity.setCtCurveId(ntrY[m]);
-								wisdplatTableService.insert(tableEntity);
-							}
+				Workbook wbs =ExcelReadUtils.readExcel(files); // 文件
+				Sheet sheets = wbs.getSheetAt(2); // sheet
+				Row row=sheets.getRow(0);
+				String dbtableId = (String)ExcelReadUtils.getCellFormatValue(row.getCell(1));
+				HashSet<String> StrTableTwo=ExcelReadUtils.getColumnSet(files, 1, 3,0,2);
+				List listtbOne=new ArrayList();
+				if(!"".equals(StrTableTwo) && null!=StrTableTwo) {
+					for(String strTableRate:StrTableTwo) {
+						if(!"".equals(strTableRate) && null!=strTableRate) {
+							listtbOne.add(strTableRate);
 						}
 					}
 				}
-
+				Collections.sort(listtbOne);
+				HashSet<String> StrTableThree=ExcelReadUtils.getColumnSet(files, 2, 3,0,2);
+				List listtbTwo=new ArrayList();
+				if(!"".equals(StrTableThree) && null!=StrTableThree) {
+					for(String strTableCurve:StrTableThree) {
+						if(!"".equals(strTableCurve) && null!=strTableCurve) {
+							listtbTwo.add(strTableCurve);
+						}
+					}
+				}
+				Collections.sort(listtbTwo);
+				if(!"".equals(dbtableId) && null!=dbtableId) {
+					WisdplatCailiaoTableEntity tableEntity=new WisdplatCailiaoTableEntity();
+						tableEntity.setCtTableNo(dbtableId);
+						tableEntity.setCtClId(dbclId);
+						if(null!=listtbOne && listtbOne.size()>0) {
+							for(int m=0;m<listtbOne.size();m++) {
+								String dbybr=String.valueOf(listtbOne.get(m));
+								tableEntity.setCtYingbianRate(dbybr);
+								if(null!=listtbTwo && listtbTwo.size()>0) {
+									for(int y=0;y<=m;y++) {
+										String dbcurveId=String.valueOf(listtbTwo.get(y));
+										tableEntity.setCtCurveId(dbcurveId);
+									}
+								}
+								wisdplatTableService.insert(tableEntity);
+							}
+						}
+				}
 			}
-			return R.ok().put("msg","材料添加成功");
+	        return R.ok();
 		}
-		//logger.info("文件名:"+fileName+"当前插入ID:"+dbclId+"材料编号:"+clNo);
 
     }
 
