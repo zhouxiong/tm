@@ -28,6 +28,9 @@
 		<if test="wcCailiaoId!=null">
 			and  cailiao_id=#{wcCailiaoId,jdbcType=BIGINT}
 		</if>
+		<if test="lcsrNo!=null">
+			and lcsr_no=#{lcsrNo,jdbcType=VARCHAR}
+		</if>
 	</select>
 	<insert id="insert" parameterType="io.renren.modules.cailiao.entity.WisdplatLCSREntity" >
     INSERT INTO wisdplat_lcsr

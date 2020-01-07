@@ -36,5 +36,7 @@ public interface WisdplatCurveService extends IService<WisdplatCurveEntity> {
      * @return
      */
     public List findProperty(Map<String,Object> map);
+    
+    public int deleteInfo(WisdplatCurveEntity entity);
 }
 

@@ -31,4 +31,6 @@ public interface WisdplatCurveDao extends BaseMapper<WisdplatCurveEntity> {
      */
     public List findProperty(Map<String,Object> map);
     
+    public int deleteInfo(WisdplatCurveEntity entity);
+    
 }

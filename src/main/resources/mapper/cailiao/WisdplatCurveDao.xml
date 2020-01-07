@@ -41,6 +41,14 @@
 			and wc_cailiao_id=#{wcCailiaoId,jdbcType=BIGINT}
 		</if>
 	</select>
-	
+	<delete id="deleteInfo" parameterType="io.renren.modules.cailiao.entity.WisdplatCurveEntity">
+		delete from wisdplat_curve where 1=1
+		<if test="wcId!=null">
+			and wc_id=#{wcId,jdbcType=BIGINT}
+		</if>
+		<if test="wcCailiaoId!=null">
+			and wc_cailiao_id=#{wcCailiaoId,jdbcType=BIGINT}
+		</if>
+	</delete>
 
 </mapper>

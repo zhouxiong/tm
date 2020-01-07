@@ -68,5 +68,11 @@ public class WisdplatCurveServiceImpl extends ServiceImpl<WisdplatCurveDao, Wisd
 	public List findProperty(Map<String, Object> map) {
 		return baseMapper.findProperty(map);
 	}
+	/**
+	 * 删除
+	 */
+	public int deleteInfo(WisdplatCurveEntity entity) {
+		return baseMapper.deleteInfo(entity);
+	}
 
 }
